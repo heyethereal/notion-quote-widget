@@ -16,13 +16,13 @@
 html[data-font="bhutuka"] {
   --numeral-font: "BhuTuka Expanded One", ui-sans-serif, "Segoe UI", sans-serif;
   --numeral-slot-width: 0.82em;
-  --colon-offset: -0.22em; /* 针对 bhutuka 的微调 */
+  --colon-offset: -0.15em; /* 针对 bhutuka 的真实对齐微调 */
 }
 
 html[data-font="moirai"] {
   --numeral-font: "Moirai One", ui-sans-serif, "Segoe UI", sans-serif;
   --numeral-slot-width: 0.68em;
-  --colon-offset: -0.05em; /* 针对 moirai 的微调，修复错位 */
+  --colon-offset: -0.06em; /* 针对 moirai 的真实对齐微调 */
 }
 
 /* ---------- 浅色 / 深色 · 通用结构 ---------- */
@@ -319,8 +319,9 @@ html[data-theme="dark"] .theme-toggle .icon-moon {
 .timer-colon {
   display: inline-block;
   padding: 0 4px; /* 两侧增加点呼吸感 */
-  font-size: 1.15em;
-  line-height: 1;
+  font-size: 1em; /* 统一字体大小，避免因放大导致基线偏移 */
+  line-height: 1.15em; /* 匹配数字的行高 */
+  vertical-align: top; /* 确保使用统一的垂直对齐起点 */
   opacity: 0.8;
   animation: colon-pulse 2.4s ease-in-out infinite;
   transform: translateY(var(--colon-offset, 0)); /* 重点：使用变量实现动态高度居中 */
