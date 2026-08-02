@@ -16,11 +16,13 @@
 html[data-font="bhutuka"] {
   --numeral-font: "BhuTuka Expanded One", ui-sans-serif, "Segoe UI", sans-serif;
   --numeral-slot-width: 0.82em;
+  --colon-offset: -0.22em; /* 针对 bhutuka 的微调 */
 }
 
 html[data-font="moirai"] {
   --numeral-font: "Moirai One", ui-sans-serif, "Segoe UI", sans-serif;
   --numeral-slot-width: 0.68em;
+  --colon-offset: -0.05em; /* 针对 moirai 的微调，修复错位 */
 }
 
 /* ---------- 浅色 / 深色 · 通用结构 ---------- */
@@ -313,7 +315,7 @@ html[data-theme="dark"] .theme-toggle .icon-moon {
   100% { transform: translateY(0); filter: blur(0); opacity: 1; }
 }
 
-/* ★重点修改：为修正特殊字体带来的冒号下坠问题，大幅提升其 translateY 的负值 */
+/* ★重点修改：修正特殊字体带来的冒号错位问题，利用CSS变量实现随字体自适应 */
 .timer-colon {
   display: inline-block;
   padding: 0 4px; /* 两侧增加点呼吸感 */
@@ -321,7 +323,7 @@ html[data-theme="dark"] .theme-toggle .icon-moon {
   line-height: 1;
   opacity: 0.8;
   animation: colon-pulse 2.4s ease-in-out infinite;
-  transform: translateY(-0.22em); /* 重点：将原先微调的 -2px 增大到 -0.22em，彻底在数字之间视觉居中 */
+  transform: translateY(var(--colon-offset, 0)); /* 重点：使用变量实现动态高度居中 */
 }
 
 @keyframes colon-pulse {
