@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pomodoro</title>
+
+<!-- 引入 Google Fonts 以解决本地字体加载问题 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=BhuTuka+Expanded+One&family=Moirai+One&family=Special+Elite&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="widget">
+
+  <!-- 深浅模式切换：绝对定位图标（左上） -->
+  <button class="theme-toggle" id="themeToggle" aria-label="切换深浅模式">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="4.2"/>
+      <line x1="12" y1="2.5" x2="12" y2="5.2"/>
+      <line x1="12" y1="18.8" x2="12" y2="21.5"/>
+      <line x1="2.5" y1="12" x2="5.2" y2="12"/>
+      <line x1="18.8" y1="12" x2="21.5" y2="12"/>
+      <line x1="5" y1="5" x2="6.9" y2="6.9"/>
+      <line x1="17.1" y1="17.1" x2="19" y2="19"/>
+      <line x1="19" y1="5" x2="17.1" y2="6.9"/>
+      <line x1="6.9" y1="17.1" x2="5" y2="19"/>
+    </svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z"/>
+    </svg>
+  </button>
+
+  <!-- 设置入口：绝对定位图标（右上） -->
+  <button class="settings-toggle" id="settingsToggle" aria-label="调整时长" aria-expanded="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+      <line x1="4" y1="6" x2="20" y2="6"/>
+      <circle cx="15" cy="6" r="2" fill="currentColor" stroke="none"/>
+      <line x1="4" y1="12" x2="20" y2="12"/>
+      <circle cx="9" cy="12" r="2" fill="currentColor" stroke="none"/>
+      <line x1="4" y1="18" x2="20" y2="18"/>
+      <circle cx="17" cy="18" r="2" fill="currentColor" stroke="none"/>
+    </svg>
+  </button>
+
+  <!-- 设置面板：绝对定位叠层，不推挤主界面 -->
+  <div class="settings-panel" id="settingsPanel">
+
+    <div class="setting-row">
+      <span class="setting-name">配色</span>
+      <div class="setting-controls">
+        <input type="range" class="setting-slider" id="paletteSlider" min="0" max="8" step="1" value="5" aria-label="配色拖动条">
+        <div class="setting-input-wrap">
+          <span class="palette-swatch" id="paletteSwatch" aria-hidden="true"></span>
+          <span class="setting-unit" id="paletteName"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 字体切换控件（数字预览效果） -->
+    <div class="setting-row">
+      <span class="setting-name">字体</span>
+      <div class="setting-controls" style="justify-content: flex-end;">
+        <button id="fontToggleBtn" class="setting-input" style="width: auto; padding: 0 8px; cursor: pointer; text-align: center; font-family: var(--numeral-font); font-size: 18px;" aria-label="切换字体">10</button>
+      </div>
+    </div>
+
+    <div class="setting-row">
+      <span class="setting-name">专注</span>
+      <div class="setting-controls">
+        <input type="range" class="setting-slider" id="focusSlider" min="1" aria-label="专注时长拖动条">
+        <div class="setting-input-wrap">
+          <input type="number" class="setting-input" id="focusInput" min="1" aria-label="专注时长数值">
+          <span class="setting-unit" id="focusUnit"></span>
+        </div>
+      </div>
+    </div>
+    <div class="setting-row">
+      <span class="setting-name">休息</span>
+      <div class="setting-controls">
+        <input type="range" class="setting-slider" id="breakSlider" min="1" aria-label="休息时长拖动条">
+        <div class="setting-input-wrap">
+          <input type="number" class="setting-input" id="breakInput" min="1" aria-label="休息时长数值">
+          <span class="setting-unit" id="breakUnit"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主界面展示区 -->
+  <div class="phase" id="phase" data-mode="focus">
+
+    <!-- 标题区 -->
+    <div class="title" id="phaseTitle"><span id="titleMain" class="title-main"></span><span id="titleDeco" class="title-deco"></span></div>
+
+    <!-- 倒计时与氛围光 -->
+    <div class="timer-wrap">
+      <div class="flow-glow flow-glow-dawn" id="glowDawn" aria-hidden="true"></div>
+      <div class="flow-glow flow-glow-dusk" id="glowDusk" aria-hidden="true"></div>
+      <div class="timer" id="timerDisplay" aria-live="off">
+        <span class="timer-minutes" id="timerMinutes">00</span><span class="timer-colon">:</span><span class="digit-slot" data-slot="s0"><span class="digit-roll"><span class="d">0</span></span></span><span class="digit-slot" data-slot="s1"><span class="digit-roll"><span class="d">0</span></span></span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 主按钮：无背景无阴影裸图标 -->
+  <div class="start-wrap" id="startWrap">
+    <button class="start-button" id="startButton" aria-label="开始 / 暂停">
+      <span class="icon icon-play">▷</span>
+      <span class="icon icon-pause">Ⅱ</span>
+      <span class="icon icon-ring">✓</span>
+    </button>
+  </div>
+
+</div>
+
+<!-- 提示音 -->
+<audio id="notificationSound" src="sounds/notification.wav" preload="auto"></audio>
+
+<script src="script.js"></script>
+</body>
+</html>
